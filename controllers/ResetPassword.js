@@ -1,6 +1,7 @@
 const User = require("../models/User");
-const mailSender = require("../utils/mailSender");
+const {mailSender} = require("../utils/mailSender");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
 //reset password token
 exports.resetPasswordToken = async (req, res) => {
@@ -10,13 +11,13 @@ exports.resetPasswordToken = async (req, res) => {
     //validate & check user for this email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({
+      return res.status(401).json({
         success: false,
-        message: "User is not registered",
+        message: `This Email: ${email} is not Registered With Us Enter a Valid Email`,
       });
     }
     //generate token
-    const token = crypto.randomUUID();
+    const token = crypto.randomBytes(20).toString("hex");
     //update user by adding token and expiration time
     const updateDetails = await User.findOneAndUpdate(
       { email },

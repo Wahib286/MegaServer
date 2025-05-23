@@ -42,10 +42,10 @@ exports.createCourse = async (req, res) => {
       status = "Draft";
     }
     // Check if the user is an instructor
-    const instructorDetails = await User.findById(userId, {
+    const instructorDetails = await User.findOne({
+      _id: userId,
       accountType: "Instructor",
     });
-
     if (!instructorDetails) {
       return res.status(404).json({
         success: false,
@@ -53,7 +53,7 @@ exports.createCourse = async (req, res) => {
       });
     }
 
-    // Check if the tag given is valid
+    // Check if the category given is valid
     const categoryDetails = await Category.findById(category);
     if (!categoryDetails) {
       return res.status(404).json({
@@ -163,7 +163,7 @@ exports.getCourseDetails = async (req, res) => {
         },
       })
       .populate("category")
-      .populate("ratingAndreviews")
+      // .populate("ratingAndreviews")
       .populate({
         path: "courseContent",
         populate: {
